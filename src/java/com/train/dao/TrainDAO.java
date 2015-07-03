@@ -2,6 +2,7 @@ package com.train.dao;
 
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -18,7 +19,9 @@ public class TrainDAO {
 	private String deleteQuery = "DELETE FROM trains WHERE idtrains = ?";
 	private String updateQuery = "UPDATE trains SET destPoint = ?, time = ?, day = ? WHERE idtrains = ?";
 	private String filterQuery = "SELECT * FROM trains WHERE destPoint = ?";
-
+	private String getidQuery = "SELECT idtrains FROM trains";
+	
+	private List<Integer> ids;
 	private PreparedStatement preparedStatement;
 	private Statement statement;
 	private DBConnection instance;
@@ -106,6 +109,9 @@ public class TrainDAO {
 		int hourDif = 0, minuteDif = 0, prevHourDif, prevMinuteDif;
 		Train train, returnTrain = new Train();
 		boolean flag = false;
+		if(trains.isEmpty()){
+			return "No such destination point";
+		}
 		if (trains.size() == 1) {
 			train = trains.get(0);
 			if ((currentDay == 1 || currentDay == 7) && train.getDay() == Day.Workdays) {
@@ -480,4 +486,22 @@ public class TrainDAO {
 		return "No such destination point";
 	}
 
+	public int getId(){
+		try {
+			ids = new ArrayList<Integer>();
+			ResultSet resultset = statement.executeQuery(getidQuery);
+			while(resultset.next()){
+				ids.add(resultset.getInt(1));
+			}
+			if(ids.isEmpty()){
+				return 1;
+			} else{
+				return ids.get(ids.size()-1)+1;
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return 1;
+	}
+	
 }

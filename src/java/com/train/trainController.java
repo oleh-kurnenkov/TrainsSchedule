@@ -1,8 +1,6 @@
 package com.train;
 
 import java.sql.Time;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
 import java.util.List;
 
 import org.json.JSONArray;
@@ -53,11 +51,11 @@ public class trainController {
 	}
 	
 	@RequestMapping(value="/inserttrain", method = RequestMethod.POST)
-	public @ResponseBody String insertTrain(@RequestParam("trainid") int id, @RequestParam("trainpoint") String point,
+	public @ResponseBody String insertTrain(@RequestParam("trainpoint") String point,
 			@RequestParam("traintime")String time, @RequestParam("trainday") String day){
 		String traintime = time.length()==8?time:time+":00";
 		TrainDAO traindao = new TrainDAO();
-		traindao.insertTrain(new Train(id,point,Time.valueOf(traintime),Day.valueOf(day)));
+		traindao.insertTrain(new Train(traindao.getId(),point,Time.valueOf(traintime),Day.valueOf(day)));
 		return "";
 	}
 	
@@ -76,7 +74,6 @@ public class trainController {
 
 		TrainDAO traindao = new TrainDAO();
 		JSONObject jsonObj = new JSONObject();
-		System.out.println("Hello");
 		jsonObj.put("message", traindao.searchTrain(point));
 		return jsonObj.toString();
 	}

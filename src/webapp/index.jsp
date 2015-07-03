@@ -42,12 +42,14 @@
 			</button>
 		</div>
 		<br>
+		    <label>Search for the nearest train:</label>
+		    <br>
 		<div class="row">
 		<div class="col-lg-6">
     <div class="input-group">
-      <input type="text" class="form-control" placeholder="Search for..." id="searchinput" >
+      <input type="text" class="form-control" placeholder="Destination point" id="searchinput" >
       <span class="input-group-btn" onclick = "findTrain()">
-        <button class="btn btn-default" type="button" onclick = "findTrain()">Go!</button>
+        <button class="btn btn-default" type="button" onclick = "findTrain()">Search</button>
       </span>
     </div><!-- /input-group -->
   </div><!-- /.col-lg-6 -->
@@ -101,8 +103,6 @@
 				</div>
 				<form class="form-group" onsubmit="return insertTrainDB();">
 					<div class="modal-body">
-					<label>ID</label>
-					<input type="text" class="form-control"  id="traininsertId" required = "required">
 					<label>Time</label>
 							<input type="time" class="form-control" id="traininsertTime" required="required"> 
 					<label>Destination point</label>
@@ -242,7 +242,6 @@
 				url : "index/inserttrain",
 				type : "POST",
 				data : {
-					trainid : $("#traininsertId").val(),
 					trainpoint : $("#traininsertPoint").val(),
 					traintime  : $("#traininsertTime").val(),
 					trainday   : $("#traininsertDay").val()
