@@ -14,12 +14,12 @@ import com.train.entity.Day;
 import com.train.entity.Train;
 
 public class TrainDAO {
-	private String insertQuery = "INSERT INTO trains (idtrains, destPoint, time, day)" + "VALUES (?, ?, ?, ?)";
-	private String getQuery = "SELECT * FROM trains";
-	private String deleteQuery = "DELETE FROM trains WHERE idtrains = ?";
-	private String updateQuery = "UPDATE trains SET destPoint = ?, time = ?, day = ? WHERE idtrains = ?";
-	private String filterQuery = "SELECT * FROM trains WHERE destPoint = ?";
-	private String getidQuery = "SELECT idtrains FROM trains";
+	private final String INSERT_QUERY = "INSERT INTO trains (idtrains, destPoint, time, day) VALUES (?, ?, ?, ?)";
+	private final String GET_QUERY = "SELECT * FROM trains";
+	private final String DELETE_QUERY = "DELETE FROM trains WHERE idtrains = ?";
+	private final String UPDATE_QUERY = "UPDATE trains SET destPoint = ?, time = ?, day = ? WHERE idtrains = ?";
+	private final String FILTER_QUERY = "SELECT * FROM trains WHERE destPoint = ?";
+	private final String GETID_QUERY = "SELECT idtrains FROM trains";
 	
 	private List<Integer> ids;
 	private PreparedStatement preparedStatement;
@@ -33,7 +33,7 @@ public class TrainDAO {
 
 	public void insertTrain(Train train) {
 		try {
-			preparedStatement = instance.getPreparedStatement(insertQuery);
+			preparedStatement = instance.getPreparedStatement(INSERT_QUERY);
 			preparedStatement.setInt(1, train.getId());
 			preparedStatement.setString(2, train.getDestPoint());
 			preparedStatement.setTime(3, train.getTime());
@@ -47,7 +47,7 @@ public class TrainDAO {
 	public ArrayList<Train> getTrains() {
 		ArrayList<Train> trains = new ArrayList<Train>();
 		try {
-			ResultSet resultSet = statement.executeQuery(getQuery);
+			ResultSet resultSet = statement.executeQuery(GET_QUERY);
 			while (resultSet.next()) {
 				trains.add(new Train(resultSet.getInt(1), resultSet.getString(2), resultSet.getTime(3),
 						Day.valueOf(resultSet.getString(4))));
@@ -60,7 +60,7 @@ public class TrainDAO {
 
 	public void deleteTrain(int Id) {
 		try {
-			preparedStatement = instance.getPreparedStatement(deleteQuery);
+			preparedStatement = instance.getPreparedStatement(DELETE_QUERY);
 			preparedStatement.setInt(1, Id);
 			preparedStatement.executeUpdate();
 		} catch (Exception ex) {
@@ -70,7 +70,7 @@ public class TrainDAO {
 
 	public void updateTrain(Train train) {
 		try {
-			preparedStatement = instance.getPreparedStatement(updateQuery);
+			preparedStatement = instance.getPreparedStatement(UPDATE_QUERY);
 			preparedStatement.setString(1, train.getDestPoint());
 			preparedStatement.setTime(2, train.getTime());
 			preparedStatement.setString(3, train.getDay().toString());
@@ -84,7 +84,7 @@ public class TrainDAO {
 	public ArrayList<Train> filterTrains(String point) {
 		ArrayList<Train> trains = new ArrayList<Train>();
 		try {
-			preparedStatement = instance.getPreparedStatement(filterQuery);
+			preparedStatement = instance.getPreparedStatement(FILTER_QUERY);
 			preparedStatement.setString(1, point);
 
 			ResultSet resultSet = preparedStatement.executeQuery();
@@ -108,14 +108,15 @@ public class TrainDAO {
 		int currentDay = calendar.get(Calendar.DAY_OF_WEEK);
 		int hourDif = 0, minuteDif = 0, prevHourDif, prevMinuteDif;
 		Train train, returnTrain = new Train();
+		String returnString = null;
 		boolean flag = false;
 		if(trains.isEmpty()){
-			return "No such destination point";
+			returnString = "No such destination point";
 		}
 		if (trains.size() == 1) {
 			train = trains.get(0);
 			if ((currentDay == 1 || currentDay == 7) && train.getDay() == Day.Workdays) {
-				return new String("Next train to " + train.getDestPoint() + " at " + train.getTime() + " on monday.");
+				returnString = new StringBuilder("Next train to ").append(train.getDestPoint()).append(" at ").append(train.getTime().toString()).append(" on monday.").toString();
 			} else if ((currentDay == 1 || currentDay == 7) && train.getDay() == Day.Weekend) {
 
 				Calendar time = Calendar.getInstance();
@@ -124,24 +125,21 @@ public class TrainDAO {
 				minuteDif = time.get(Calendar.MINUTE) - currentMinute;
 
 				if (currentDay == 7 && (hourDif < 0 || (hourDif == 0 && minuteDif < 0))) {
-					return new String(
-							"Next train to " + train.getDestPoint() + " tomorrow " + " at " + train.getTime());
+					returnString = new StringBuilder("Next train to ").append(train.getDestPoint()).append(" tomorrow at ").append(train.getTime().toString()).toString();
 				} else if (currentDay == 7) {
-					return new String("Next train to " + train.getDestPoint() + " today " + " at " + train.getTime());
+					returnString = new StringBuilder("Next train to ").append(train.getDestPoint()).append(" today at ").append(train.getTime().toString()).toString();
 				}
 				if (hourDif < 0 || (hourDif == 0 && minuteDif < 0)) {
-					return new String(
-							"Next train to " + train.getDestPoint() + " next weekend " + " at " + train.getTime());
+					returnString = new StringBuilder("Next train to ").append(train.getDestPoint()).append(" next weekend at ").append(train.getTime().toString()).toString();
 				} else {
-					return new String("Next train to " + train.getDestPoint() + " today " + " at " + train.getTime());
+					returnString = new StringBuilder("Next train to ").append(train.getDestPoint()).append(" today at ").append(train.getTime().toString()).toString();
 				}
 			} else if (train.getDay() == Day.Workdays) {
-				return new String(
-						"Next train to " + train.getDestPoint() + " next workday " + " at " + train.getTime());
+				returnString = new StringBuilder("Next train to ").append(train.getDestPoint()).append(" next workday ").append(train.getTime().toString()).toString();
 			} else if (hourDif < 0 || (hourDif == 0 && minuteDif < 0)) {
-				return new String("Next train to " + train.getDestPoint() + " tomorrow " + " at " + train.getTime());
+				returnString = new StringBuilder("Next train to ").append(train.getDestPoint()).append(" tomorrow at ").append(train.getTime().toString()).toString();
 			} else {
-				return new String("Next train to " + train.getDestPoint() + " today " + " at " + train.getTime());
+				returnString = new StringBuilder("Next train to ").append(train.getDestPoint()).append(" today at ").append(train.getTime().toString()).toString();
 			}
 		}
 
@@ -230,11 +228,11 @@ public class TrainDAO {
 				}
 			}
 			if(flag){
-				return new String("Next train to " + returnTrain.getDestPoint() + " today " + " at " + returnTrain.getTime());
+				returnString = new StringBuilder("Next train to ").append(returnTrain.getDestPoint()).append(" today at ").append(returnTrain.getTime().toString()).toString();
 			} else if(returnTrain.getDay()==Day.Workdays){
-				return new String("Next train to " + returnTrain.getDestPoint() + " tomorrow " + " at " + returnTrain.getTime());
+				returnString = new StringBuilder("Next train to ").append(returnTrain.getDestPoint()).append(" tomorrow at ").append(returnTrain.getTime().toString()).toString();
 			} else {
-				return new String("Next train to " + returnTrain.getDestPoint() + " next weekend " + " at " + returnTrain.getTime());
+				returnString = new StringBuilder("Next train to ").append(returnTrain.getDestPoint()).append(" next weekend at ").append(returnTrain.getTime().toString()).toString();
 			}
 		} else if (currentDay == 6) {
 			if (!workdayTrains.isEmpty()) {
@@ -288,7 +286,7 @@ public class TrainDAO {
 					}
 				}
 			}  
-			 	if(flag==false && !weekendTrains.isEmpty()){
+			 	if(!flag && !weekendTrains.isEmpty()){
 				train = weekendTrains.get(0);
 				Calendar time = Calendar.getInstance();
 				time.setTime((Date) train.getTime());
@@ -313,11 +311,11 @@ public class TrainDAO {
 				}
 			}
 			if(flag){
-				return new String("Next train to " + returnTrain.getDestPoint() + " today " + " at " + returnTrain.getTime());
+				returnString = new StringBuilder("Next train to ").append(returnTrain.getDestPoint()).append(" today at ").append(returnTrain.getTime().toString()).toString();
 			} else if(returnTrain.getDay()==Day.Workdays){
-				return new String("Next train to " + returnTrain.getDestPoint() + " next workday " + " at " + returnTrain.getTime());
+				returnString = new StringBuilder("Next train to ").append(returnTrain.getDestPoint()).append(" next workday at ").append(returnTrain.getTime().toString()).toString();
 			} else {
-				return new String("Next train to " + returnTrain.getDestPoint() + " next weekend " + " at " + returnTrain.getTime());
+				returnString = new StringBuilder("Next train to ").append(returnTrain.getDestPoint()).append(" next weekend at ").append(returnTrain.getTime().toString()).toString();
 			}
 		} else if(currentDay==7){
 			if (!weekendTrains.isEmpty()) {
@@ -369,7 +367,7 @@ public class TrainDAO {
 
 					}
 				}
-			} 	if (!workdayTrains.isEmpty()) {
+			} else	if (!workdayTrains.isEmpty()) {
 				train = workdayTrains.get(0);
 				Calendar time = Calendar.getInstance();
 				time.setTime((Date) train.getTime());
@@ -394,11 +392,11 @@ public class TrainDAO {
 				}
 			}
 			if(flag){
-				return new String("Next train to " + returnTrain.getDestPoint() + " today " + " at " + returnTrain.getTime());
+				returnString = new StringBuilder("Next train to ").append(returnTrain.getDestPoint()).append(" today at ").append(returnTrain.getTime().toString()).toString();
 			} else if(returnTrain.getDay()==Day.Weekend){
-				return new String("Next train to " + returnTrain.getDestPoint() + " tomorrow " + " at " + returnTrain.getTime());
+				returnString = new StringBuilder("Next train to ").append(returnTrain.getDestPoint()).append(" tomorrow at ").append(returnTrain.getTime().toString()).toString();
 			} else {
-				return new String("Next train to " + returnTrain.getDestPoint() + " next workday " + " at " + returnTrain.getTime());
+				returnString = new StringBuilder("Next train to ").append(returnTrain.getDestPoint()).append(" next workday at ").append(returnTrain.getTime().toString()).toString();
 			}
 		}   if (currentDay==1){
 			if (!weekendTrains.isEmpty()) {
@@ -451,7 +449,7 @@ public class TrainDAO {
 
 					}
 				}
-			}   if(flag!=true && !workdayTrains.isEmpty()){
+			}   if(!flag && !workdayTrains.isEmpty()){
 				train = workdayTrains.get(0);
 				Calendar time = Calendar.getInstance();
 				time.setTime((Date) train.getTime());
@@ -476,20 +474,20 @@ public class TrainDAO {
 				}
 			}
 			if(flag){
-				return new String("Next train to " + returnTrain.getDestPoint() + " today " + " at " + returnTrain.getTime());
+				returnString = new StringBuilder("Next train to ").append(returnTrain.getDestPoint()).append(" today at ").append(returnTrain.getTime().toString()).toString();
 			} else if(returnTrain.getDay()==Day.Workdays){
-				return new String("Next train to " + returnTrain.getDestPoint() + " next workday " + " at " + returnTrain.getTime());
+				returnString = new StringBuilder("Next train to ").append(returnTrain.getDestPoint()).append(" next workday at ").append(returnTrain.getTime().toString()).toString();
 			} else {
-				return new String("Next train to " + returnTrain.getDestPoint() + " next weekend " + " at " + returnTrain.getTime());
+				returnString = new StringBuilder("Next train to ").append(returnTrain.getDestPoint()).append(" next weekend at ").append(returnTrain.getTime().toString()).toString();
 			}
 		}
-		return "No such destination point";
+		return returnString;
 	}
 
 	public int getId(){
 		try {
 			ids = new ArrayList<Integer>();
-			ResultSet resultset = statement.executeQuery(getidQuery);
+			ResultSet resultset = statement.executeQuery(GETID_QUERY);
 			while(resultset.next()){
 				ids.add(resultset.getInt(1));
 			}

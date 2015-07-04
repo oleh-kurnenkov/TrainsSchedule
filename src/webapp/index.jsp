@@ -42,20 +42,20 @@
 			</button>
 		</div>
 		<br>
-		    <label>Search for the nearest train:</label>
-		    <br>
+		<label>Search for the nearest train:</label>
+		<br>
 		<div class="row">
-		<div class="col-lg-6">
-    <div class="input-group">
-      <input type="text" class="form-control" placeholder="Destination point" id="searchinput" >
-      <span class="input-group-btn" onclick = "findTrain()">
-        <button class="btn btn-default" type="button" onclick = "findTrain()">Search</button>
-      </span>
-    </div><!-- /input-group -->
-  </div><!-- /.col-lg-6 -->
-</div><!-- /.row -->
- <label id = "searchlabel"></label>
-		</div>
+			<div class="col-lg-6">
+    			<div class="input-group">
+      				<input type="text" class="form-control" placeholder="Destination point" id="searchinput" >
+      				<span class="input-group-btn" onclick = "findTrain()">
+        				<button class="btn btn-default" type="button" onclick = "findTrain()">Search</button>
+      				</span>
+    			</div><!-- /input-group -->
+  			</div><!-- /.col-lg-6 -->
+		</div><!-- /.row -->
+ 		<label id = "searchlabel"></label>
+	</div>
 
 
 <div id="updateTrainModal" class="modal fade">
@@ -80,8 +80,7 @@
 						</select>
 					</div>
 					<div class="modal-footer">
-						<button class="btn btn-primary btn btn-danger" data-dismiss="modal"
-						aria-hidden="true">Cancel 
+						<button class="btn btn-primary btn btn-danger" data-dismiss="modal" aria-hidden="true">Cancel 
 					  		<span class="glyphicon glyphicon-remove"></span>
 						</button>
 						<button type="submit" class="btn btn-primary btn btn-success" onclick = "updateTrainDB()">Save 
@@ -169,8 +168,8 @@
 					var tableHtml = '<thead><tr> <th>ID</th> <th>Destination point</th> <th>Time</th> <th>Day</th> </tr></thead> <tbody>';
 					$.each(respJSON,function(i,train){
 						tableHtml+='<tr><td>' + train.id + '</td><td>' + train.destinationpoint + '</td><td>' + train.time + '</td><td>' + train.day + '</td>';
-						tableHtml+='<td><button class="btn btn-primary" onclick="deleteTrain('+ train.id +')">del</button>';
-						tableHtml+='  <button class="btn btn-primary" onclick="updateTrain('+ train.id+","+ "'"+train.destinationpoint + "'"+","+ "'"+train.time+ "'"+","+ "'"+train.day+ "'"+' )" >upd</button></td></tr>';
+						tableHtml+='<td><button class="btn btn-primary" onclick="deleteTrain('+ train.id +')"><span class="glyphicon glyphicon-remove"></span></button>';
+						tableHtml+='  <button class="btn btn-primary" onclick="updateTrain('+ train.id+","+ "'"+train.destinationpoint + "'"+","+ "'"+train.time+ "'"+","+ "'"+train.day+ "'"+' )" ><span class="glyphicon glyphicon-wrench"></span></button></td></tr>';
 					});
 					tableHtml+='</tbody>';
 					$("#trains_table").append(tableHtml);
@@ -282,8 +281,8 @@
 					var tableHtml  = '<tbody>';
 					$.each(respJSON,function(i,train){
 						tableHtml+='<tr><td>' + train.id + '</td><td>' + train.destinationpoint + '</td><td>' + train.time + '</td><td>' + train.day + '</td>';
-						tableHtml+='<td><button class="btn btn-primary" onclick="deleteTrain('+ train.id +')">del</button>';
-						tableHtml+='  <button class="btn btn-primary" onclick="updateTrain('+ train.id+","+ "'"+train.destinationpoint + "'"+","+ "'"+train.time+ "'"+","+ "'"+train.day+ "'"+' )" >upd</button></td></tr>';
+						tableHtml+='<td><button class="btn btn-primary" onclick="deleteTrain('+ train.id +')"><span class="glyphicon glyphicon-remove"></span></button>';
+						tableHtml+='  <button class="btn btn-primary" onclick="updateTrain('+ train.id+","+ "'"+train.destinationpoint + "'"+","+ "'"+train.time+ "'"+","+ "'"+train.day+ "'"+' )" ><span class="glyphicon glyphicon-wrench"></span></button></td></tr>';
 					});
 					tableHtml+='</tbody>';
 					$("#trains_table").append(tableHtml);

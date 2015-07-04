@@ -1,3 +1,5 @@
 package com.train.entity;
 
-public enum Day{Workdays, Weekend};
+public enum Day{
+	Workdays, Weekend
+	};

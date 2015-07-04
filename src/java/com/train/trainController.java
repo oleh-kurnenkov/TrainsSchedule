@@ -1,7 +1,10 @@
 package com.train;
 
 import java.sql.Time;
+import java.text.SimpleDateFormat;
 import java.util.List;
+
+import javax.annotation.PostConstruct;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -19,64 +22,70 @@ import com.train.util.SerealizationUtil;
 
 @Controller
 @RequestMapping(value = "/index")
-public class trainController {
-
+public class TrainController {
+	TrainDAO trainDao;
+	SimpleDateFormat simpleDateFormat;
+	
 	@RequestMapping(value = "/deletetrain", method = RequestMethod.POST)
 	public @ResponseBody String deleteTrain(@RequestParam("trainid") int id) throws JSONException {
 		JSONObject jsonObj = new JSONObject();
-		TrainDAO traindao = new TrainDAO();
-		traindao.deleteTrain(id);
+		trainDao.deleteTrain(id);
+		jsonObj.put("error", false);
 		return jsonObj.toString();
 	}
-	
 
-	
-	@RequestMapping(value="/loadtrains", method = RequestMethod.POST)
-	public @ResponseBody String loadTrains(){
+	@RequestMapping(value = "/loadtrains", method = RequestMethod.POST)
+	public @ResponseBody String loadTrains() {
 		JSONArray responseJsonArray = new JSONArray();
-		TrainDAO trainDAO = new TrainDAO();
-		List<Train> trainList = trainDAO.getTrains();
-		if(!trainList.isEmpty())
-		{ responseJsonArray = SerealizationUtil.serealizeTrainObjects(trainList);}
+		List<Train> trainList = trainDao.getTrains();
+		if (!trainList.isEmpty()) {
+			responseJsonArray = SerealizationUtil.serealizeTrainObjects(trainList);
+		}
 		return responseJsonArray.toString();
 	}
-	
-	@RequestMapping(value="/updatetrain", method = RequestMethod.POST)
+
+	@RequestMapping(value = "/updatetrain", method = RequestMethod.POST)
 	public @ResponseBody String updateTrain(@RequestParam("trainid") int id, @RequestParam("trainpoint") String point,
-			@RequestParam("traintime")String time, @RequestParam("trainday") String day){
-		String traintime = time.length()==8?time:time+":00";
-		TrainDAO traindao = new TrainDAO();
-		traindao.updateTrain(new Train(id,point,Time.valueOf(traintime),Day.valueOf(day)));
-		return "";
+			@RequestParam("traintime") String time, @RequestParam("trainday") String day) throws JSONException {
+		String trainTime = time.length() == 8 ? time : time + ":00";
+		trainDao.updateTrain(new Train(id, point, Time.valueOf(trainTime), Day.valueOf(day)));
+		JSONObject jsonObj = new JSONObject();
+		jsonObj.put("error", false);
+		return jsonObj.toString();
 	}
-	
-	@RequestMapping(value="/inserttrain", method = RequestMethod.POST)
+
+	@RequestMapping(value = "/inserttrain", method = RequestMethod.POST)
 	public @ResponseBody String insertTrain(@RequestParam("trainpoint") String point,
-			@RequestParam("traintime")String time, @RequestParam("trainday") String day){
-		String traintime = time.length()==8?time:time+":00";
-		TrainDAO traindao = new TrainDAO();
-		traindao.insertTrain(new Train(traindao.getId(),point,Time.valueOf(traintime),Day.valueOf(day)));
-		return "";
+			@RequestParam("traintime") String time, @RequestParam("trainday") String day) throws JSONException {
+		String trainTime = time.length() == 8 ? time : time + ":00";
+		trainDao.insertTrain(new Train(trainDao.getId(), point, Time.valueOf(trainTime), Day.valueOf(day)));
+		JSONObject jsonObj = new JSONObject();
+		jsonObj.put("error", false);
+		return jsonObj.toString();
 	}
-	
-	@RequestMapping(value="/filtertrain", method = RequestMethod.POST)
-	public @ResponseBody String filterTrains(@RequestParam("trainpoint") String point){
+
+	@RequestMapping(value = "/filtertrain", method = RequestMethod.POST)
+	public @ResponseBody String filterTrains(@RequestParam("trainpoint") String point) {
 		JSONArray responseJsonArray = new JSONArray();
-		TrainDAO trainDAO = new TrainDAO();
-		List<Train> trainList = trainDAO.filterTrains(point);
-		if(!trainList.isEmpty())
-		{ responseJsonArray = SerealizationUtil.serealizeTrainObjects(trainList);}
+		List<Train> trainList = trainDao.filterTrains(point);
+		if (!trainList.isEmpty()) {
+			responseJsonArray = SerealizationUtil.serealizeTrainObjects(trainList);
+		}
 		return responseJsonArray.toString();
 	}
-	
+
 	@RequestMapping(value = "/findtrain", method = RequestMethod.POST)
 	public @ResponseBody String filterTrain(@RequestParam("trainpoint") String point) throws JSONException {
-
-		TrainDAO traindao = new TrainDAO();
+		TrainDAO trainDao = new TrainDAO();
 		JSONObject jsonObj = new JSONObject();
-		jsonObj.put("message", traindao.searchTrain(point));
+		jsonObj.put("message", trainDao.searchTrain(point));
 		return jsonObj.toString();
 	}
-	
+
+	@PostConstruct
+	public void init() {
+		trainDao = new TrainDAO();
+		simpleDateFormat = new SimpleDateFormat("HH:mm:ss");
+	}
 	
 }

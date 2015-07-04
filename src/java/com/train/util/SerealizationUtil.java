@@ -6,10 +6,13 @@ import org.json.JSONObject;
 
 import com.train.entity.Train;
 
-public class SerealizationUtil {
+public final class SerealizationUtil {
 	private SerealizationUtil() {
 	};
-
+    private final static String ID = "id";
+    private final static String DESTINATIONPOINT = "destinationpoint";
+    private final static String TIME = "time";
+    private final static String DAY = "day";
 	public static JSONArray serealizeTrainObjects(List<Train> trains) {
 		JSONArray trainsJsonArray = new JSONArray();
 		for (Train train : trains) {
@@ -21,10 +24,10 @@ public class SerealizationUtil {
 	public static JSONObject serealizeTrainObject(Train train) {
 		JSONObject trainJson = new JSONObject();
 		try {
-			trainJson.put("id", train.getId());
-			trainJson.put("destinationpoint", train.getDestPoint());
-			trainJson.put("time", train.getTime().toString());
-			trainJson.put("day", train.getDay().toString());
+			trainJson.put(ID, train.getId());
+			trainJson.put(DESTINATIONPOINT, train.getDestPoint());
+			trainJson.put(TIME, train.getTime().toString());
+			trainJson.put(DAY, train.getDay().toString());
 		} catch (Exception ex) {
 			System.out.println(ex);
 		}
