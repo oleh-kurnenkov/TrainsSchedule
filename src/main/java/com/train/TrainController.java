@@ -24,7 +24,6 @@ import com.train.util.SerealizationUtil;
 @RequestMapping(value = "/index")
 public class TrainController {
 	TrainDAO trainDao;
-	SimpleDateFormat simpleDateFormat;
 	
 	@RequestMapping(value = "/deletetrain", method = RequestMethod.POST)
 	public @ResponseBody String deleteTrain(@RequestParam("trainid") int id) throws JSONException {
@@ -85,7 +84,6 @@ public class TrainController {
 	@PostConstruct
 	public void init() {
 		trainDao = new TrainDAO();
-		simpleDateFormat = new SimpleDateFormat("HH:mm:ss");
 	}
 	
 }

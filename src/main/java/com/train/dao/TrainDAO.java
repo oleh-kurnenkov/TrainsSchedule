@@ -14,12 +14,12 @@ import com.train.entity.Day;
 import com.train.entity.Train;
 
 public class TrainDAO {
-	private final String INSERT_QUERY = "INSERT INTO trains (idtrains, destPoint, time, day) VALUES (?, ?, ?, ?)";
-	private final String GET_QUERY = "SELECT * FROM trains";
-	private final String DELETE_QUERY = "DELETE FROM trains WHERE idtrains = ?";
-	private final String UPDATE_QUERY = "UPDATE trains SET destPoint = ?, time = ?, day = ? WHERE idtrains = ?";
-	private final String FILTER_QUERY = "SELECT * FROM trains WHERE destPoint = ?";
-	private final String GETID_QUERY = "SELECT idtrains FROM trains";
+	private static final String INSERT_QUERY = "INSERT INTO trains (idtrains, destPoint, time, day) VALUES (?, ?, ?, ?)";
+	private static final String GET_QUERY = "SELECT * FROM trains";
+	private static final String DELETE_QUERY = "DELETE FROM trains WHERE idtrains = ?";
+	private static final String UPDATE_QUERY = "UPDATE trains SET destPoint = ?, time = ?, day = ? WHERE idtrains = ?";
+	private static final String FILTER_QUERY = "SELECT * FROM trains WHERE destPoint = ?";
+	private static final String GETID_QUERY = "SELECT idtrains FROM trains";
 	
 	private List<Integer> ids;
 	private PreparedStatement preparedStatement;
